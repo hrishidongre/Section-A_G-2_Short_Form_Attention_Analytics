@@ -360,99 +360,25 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
 # PHASE 3 — LOAD
 # ===========================================================================
 
-def load(df: pd.DataFrame, output_dir: str = "output") -> dict:
+def load(df: pd.DataFrame, output_path: str) -> str:
     """
-    Persist transformed data in multiple formats:
-      - Full transformed CSV (all columns)
-      - ML-ready CSV (numeric/encoded only, no raw categoricals)
-      - Summary statistics CSV
-      - ETL run metadata text file
+    Persist transformed data as a single cleaned CSV file.
     """
     log.info("=" * 60)
     log.info("PHASE 3 — LOAD")
     log.info("=" * 60)
 
-    out = Path(output_dir)
-    out.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
 
-    outputs = {}
-
-    # --- 3.1  Full Transformed CSV -----------------------------------------
-    full_path = out / f"transformed_full_{timestamp}.csv"
-    df.to_csv(full_path, index=False)
-    outputs["full_csv"] = str(full_path)
-    log.info(f"\n[3.1] Full CSV saved       : {full_path}")
-    log.info(f"      Shape                 : {df.shape}")
-
-    # --- 3.2  ML-Ready CSV (drop raw/redundant cols) -----------------------
-    drop_for_ml = ["user_id", "age_group", "stress_level"]
-    ml_df = df.drop(columns=[c for c in drop_for_ml if c in df.columns])
-
-    ml_path = out / f"ml_ready_{timestamp}.csv"
-    ml_df.to_csv(ml_path, index=False)
-    outputs["ml_csv"] = str(ml_path)
-    log.info(f"\n[3.2] ML-ready CSV saved   : {ml_path}")
-    log.info(f"      Shape                 : {ml_df.shape}")
-    log.info(f"      Columns               : {list(ml_df.columns)}")
-
-    # --- 3.3  Summary Statistics CSV ---------------------------------------
-    stats_df = df[[
-        "age", "reels_watch_time_hours", "daily_screen_time_hours",
-        "scrolling_sessions_day", "notifications_per_day",
-        "sleep_hours", "physical_activity_hours_week",
-        "attention_span_score", "focus_level", "task_completion_rate",
-        "screen_time_severity", "wellness_score", "productivity_index",
-        "stress_level_encoded"
-    ]].describe().round(4)
-
-    stats_path = out / f"summary_stats_{timestamp}.csv"
-    stats_df.to_csv(stats_path)
-    outputs["stats_csv"] = str(stats_path)
-    log.info(f"\n[3.3] Summary stats saved  : {stats_path}")
-
-    # --- 3.4  ETL Metadata file --------------------------------------------
-    meta_path = out / f"etl_metadata_{timestamp}.txt"
-    with open(meta_path, "w") as f:
-        f.write("=" * 60 + "\n")
-        f.write("ETL RUN METADATA\n")
-        f.write("=" * 60 + "\n")
-        f.write(f"Run timestamp           : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"Source file             : cleaned_data_userID__1_.csv\n")
-        f.write(f"Source rows             : 11,988\n")
-        f.write(f"Source columns          : 15\n")
-        f.write(f"\nPost-transform shape   : {df.shape}\n")
-        f.write(f"Columns added           : {df.shape[1] - 15}\n")
-        f.write(f"\nNull imputation:\n")
-        f.write(f"  notifications_per_day      : median imputation (220 nulls, 1.84%)\n")
-        f.write(f"  physical_activity_hours_week: median imputation (490 nulls, 4.09%)\n")
-        f.write(f"\nFeatures engineered:\n")
-        f.write(f"  age_group              : 5-bucket ordinal age bins\n")
-        f.write(f"  screen_time_severity   : composite score (reels + screen + scrolling)\n")
-        f.write(f"  wellness_score         : composite score (sleep + activity - notifications)\n")
-        f.write(f"  productivity_index     : composite score (focus + attention + task)\n")
-        f.write(f"  high_screen_time_flag  : binary (daily_screen_time > 8h)\n")
-        f.write(f"  poor_sleep_flag        : binary (sleep_hours < 6h)\n")
-        f.write(f"  reels_to_screen_ratio  : reels / daily_screen_time\n")
-        f.write(f"\nEncoding:\n")
-        f.write(f"  stress_level_encoded   : ordinal (Low=1, Medium=2, High=3)\n")
-        f.write(f"  gender                 : one-hot\n")
-        f.write(f"  location               : one-hot\n")
-        f.write(f"  platform               : one-hot\n")
-        f.write(f"\nNormalization:\n")
-        f.write(f"  10 numeric columns min-max normalized (suffix _norm)\n")
-        f.write(f"\nOutput files:\n")
-        for k, v in outputs.items():
-            f.write(f"  {k:<20} : {v}\n")
-        f.write("=" * 60 + "\n")
-
-    outputs["metadata"] = str(meta_path)
-    log.info(f"\n[3.4] ETL metadata saved   : {meta_path}")
+    df.to_csv(out, index=False)
+    log.info(f"\n  Saved to       : {out}")
+    log.info(f"  Shape          : {df.shape}")
+    log.info(f"  Columns        : {list(df.columns)}")
     log.info("\n[LOAD] Completed successfully.")
-    log.info(f"\nAll outputs in : {out.resolve()}/")
     log.info("=" * 60)
 
-    return outputs
+    return str(out)
 
 
 # ===========================================================================
@@ -463,7 +389,7 @@ if __name__ == "__main__":
     # Resolve paths relative to the project root (parent of scripts/)
     PROJECT_ROOT = Path(__file__).resolve().parent.parent
     SOURCE_FILE  = str(PROJECT_ROOT / "data" / "processed" / "cleaned_data_userID.csv")
-    OUTPUT_DIR   = str(PROJECT_ROOT / "etl_output")
+    OUTPUT_PATH  = str(PROJECT_ROOT / "data" / "processed" / "final_data.csv")
 
     log.info("\n" + "=" * 60)
     log.info(" SOCIAL MEDIA BEHAVIOR — ETL PIPELINE")
@@ -478,10 +404,10 @@ if __name__ == "__main__":
         transformed_df = transform(raw_df)
 
         # LOAD
-        output_paths = load(transformed_df, output_dir=OUTPUT_DIR)
+        output_file = load(transformed_df, output_path=OUTPUT_PATH)
 
         log.info("\n  ETL PIPELINE FINISHED SUCCESSFULLY")
-        log.info(f"    Output files : {list(output_paths.values())}")
+        log.info(f"    Output file : {output_file}")
 
     except FileNotFoundError as e:
         log.error(f"FILE ERROR: {e}")
@@ -489,3 +415,4 @@ if __name__ == "__main__":
         log.error(f"VALIDATION ERROR: {e}")
     except Exception as e:
         log.error(f"UNEXPECTED ERROR: {e}", exc_info=True)
+
