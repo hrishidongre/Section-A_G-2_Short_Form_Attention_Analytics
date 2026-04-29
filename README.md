@@ -202,13 +202,13 @@ This table must match evidence in GitHub Insights, PR history, and committed fil
 
 | Team Member | Dataset & Sourcing | ETL & Cleaning | EDA & Analysis | Statistical Analysis | Tableau Dashboard | Report Writing | PPT & Viva |
 |---|---|---|---|---|---|---|---|
-| Neelanshu Karn |  |  | ✓ |  | | | ✓|
-| Hrishi Dongre |  ✓ |  | ✓ |  |  |  |  |
-| Akhilesh Kumar |  |  |  |  | ✓ | ✓ |  |
-| Lakshya Agrawal | ✓ |  |  |  | ✓ |  |  |
-| Kapil Kumar Mathur |  |  | ✓ | ✓ |  |  |  |
-| Ritik Atri |  |  |  |  |  | ✓ | ✓ |
-| Aaryan Gera |  | ✓ |  | ✓ |  |  |  |
+| Neelanshu Karn |  |  | ✓ | ✓ | | | ✓|
+| Hrishi Dongre |  ✓ |  | ✓ |  | ✓ |  |  |
+| Akhilesh Kumar | ✓ |  |  |  | ✓ | ✓ |  |
+| Lakshya Agrawal | ✓ |  |  | ✓ | ✓ |  |  |
+| Kapil Kumar Mathur |  |  | ✓ | ✓ |  | ✓ |  |
+| Ritik Atri | ✓ |  |  |  |  | ✓ | ✓ |
+| Aaryan Gera |  | ✓ | ✓ | ✓ |  |  |  |
 
 _Declaration: We confirm that the above contribution details are accurate and verifiable through GitHub Insights, PR history, and submitted artifacts._
 
