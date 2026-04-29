@@ -2,7 +2,7 @@
 
 ---
 
-| Name        | Portfolio Link              |
+| Name        | Resume Link              |
 |------------|---------------------------|
 | Hrishi Dongre  | [Resume Link](https://drive.google.com/file/d/1bPmbucPveQAZS8fHJ1b_x1q0CmSkt2YL/view?usp=sharing)     |
 | Person 2   |      |
