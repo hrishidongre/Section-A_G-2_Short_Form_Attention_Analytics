@@ -8,6 +8,6 @@
 |Ritk atri  |    [Portfolio Link](https://dva-portfolio-jade.vercel.app/)    |
 | Kapil Karan Mathur   | [Portfolio Link](https://kapilkaranmathur.github.io/DVA_Portfolio/) |
 |Neelanshu Karn |    [Portfolio Link](https://neelanshuxp.vercel.app/)    |
-| Person 5   |      |
+| Lakshya Agrawal  |  [Portfolio Link](https://dva-portfolio-six-theta.vercel.app/)   |
 | Person 6   |      |
 | Person 7   |      |
